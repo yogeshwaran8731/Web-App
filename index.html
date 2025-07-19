@@ -5,12 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Automation</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📧</text></svg>">
 </head>
 <body>
     <center>
     <h1>Email Automater 📩 </h1>
+    <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Send Email" width="80" height="80" class="email-icon">
     <p>Schedule your Email here ⬇️ </p>
-    <button>Write an email</button>
+    <button id="compose-btn">Write an email</button>
+    <div id="compose-container"></div>
     </center>
+    <script>
+document.getElementById('compose-btn').addEventListener('click', function() {
+    const composeBtn = document.getElementById('compose-btn');
+    const container = document.getElementById('compose-container');
+    // Prevent multiple boxes
+    if (container.innerHTML.trim() !== "") return;
+    // Hide the original button
+    composeBtn.style.display = 'none';
+    // Create email input
+    const emailInput = document.createElement('input');
+    emailInput.type = 'email';
+    emailInput.placeholder = 'Recipient\'s email address';
+    emailInput.className = 'email-input';
+    emailInput.required = true;
+    container.appendChild(emailInput);
+    // Create textarea
+    const textarea = document.createElement('textarea');
+    textarea.placeholder = "Compose your email...";
+    textarea.className = "compose-box";
+    container.appendChild(textarea);
+    // Create new button below textarea
+    const sendBtn = document.createElement('button');
+    sendBtn.textContent = 'Send Email';
+    sendBtn.className = 'send-btn';
+    sendBtn.style.display = 'block';
+    sendBtn.style.margin = '20px auto 0 auto';
+    container.appendChild(sendBtn);
+
+    // Add send button functionality
+    sendBtn.addEventListener('click', function() {
+        // Validate email
+        if (!(emailInput.value.includes('@') && emailInput.value.includes('.com'))) {
+            // Remove any previous error
+            const prevError = document.getElementById('email-error');
+            if (prevError) prevError.remove();
+            // Show error message
+            const error = document.createElement('div');
+            error.id = 'email-error';
+            error.textContent = 'Error: Email address must contain "@" and ".com"';
+            error.style.color = 'red';
+            error.style.textAlign = 'center';
+            error.style.marginTop = '10px';
+            container.insertBefore(error, textarea);
+            return;
+        } else {
+            const prevError = document.getElementById('email-error');
+            if (prevError) prevError.remove();
+        }
+        container.innerHTML = '';
+        const confirmation = document.createElement('div');
+        confirmation.textContent = 'Your email has been sent!';
+        confirmation.style.textAlign = 'center';
+        confirmation.style.marginTop = '20px';
+        confirmation.style.fontWeight = 'bold';
+        confirmation.style.color = '#2563eb';
+        container.appendChild(confirmation);
+        // Show the original button again after a short delay
+        setTimeout(function() {
+            container.innerHTML = '';
+            composeBtn.style.display = 'inline-block';
+        }, 1500);
+    });
+});
+</script>
 </body>
 </html>
