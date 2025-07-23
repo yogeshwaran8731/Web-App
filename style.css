@@ -1,12 +1,12 @@
 body {
     min-height: 100vh;
-    /* Animated gradient background */
-    background: linear-gradient(-45deg, #ffecd2, #fcb69f, #a1c4fd, #c2e9fb);
+    /* Animated darker light blue and light purple gradient background */
+    background: linear-gradient(-45deg, #87ceeb, #ba55d3, #6495ed, #9370db);
     background-size: 400% 400%;
     animation: gradientBG 10s ease-in-out infinite;
-  }
+}
   
-  @keyframes gradientBG {
+@keyframes gradientBG {
     0% {
       background-position: 0% 50%;
     }
@@ -16,7 +16,8 @@ body {
     100% {
       background-position: 0% 50%;
     }
-  }
+}
+
 *{
     margin: 0%;
     margin-top: 5%;
@@ -34,26 +35,6 @@ button:hover{
     transition-duration: 0.4s;
     cursor: pointer;
     color: aliceblue;
-}
-
-body {
-  min-height: 100vh;
-  /* Animated gradient background */
-  background: linear-gradient(-45deg, #ffecd2, #fcb69f, #a1c4fd, #c2e9fb);
-  background-size: 400% 400%;
-  animation: gradientBG 10s ease-in-out infinite;
-}
-
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
 }
 
 .email-icon {

@@ -9,7 +9,7 @@
 </head>
 <body>
     <center>
-    <h1>Email Automater 📩 </h1>
+    <h1>Email Sender 📩</h1>
     <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Send Email" width="80" height="80" class="email-icon">
     <p>Schedule your Email here ⬇️ </p>
     <button id="compose-btn">Write an email</button>
@@ -44,38 +44,103 @@ document.getElementById('compose-btn').addEventListener('click', function() {
     container.appendChild(sendBtn);
 
     // Add send button functionality
-    sendBtn.addEventListener('click', function() {
+    sendBtn.addEventListener('click', async function() {
+        // Remove any previous error
+        const prevError = document.getElementById('email-error');
+        if (prevError) prevError.remove();
+
         // Validate email
-        if (!(emailInput.value.includes('@') && emailInput.value.includes('.com'))) {
-            // Remove any previous error
-            const prevError = document.getElementById('email-error');
-            if (prevError) prevError.remove();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value)) {
             // Show error message
             const error = document.createElement('div');
             error.id = 'email-error';
-            error.textContent = 'Error: Email address must contain "@" and ".com"';
+            error.textContent = 'Error: Please enter a valid email address';
             error.style.color = 'red';
             error.style.textAlign = 'center';
             error.style.marginTop = '10px';
             container.insertBefore(error, textarea);
             return;
-        } else {
-            const prevError = document.getElementById('email-error');
-            if (prevError) prevError.remove();
         }
-        container.innerHTML = '';
-        const confirmation = document.createElement('div');
-        confirmation.textContent = 'Your email has been sent!';
-        confirmation.style.textAlign = 'center';
-        confirmation.style.marginTop = '20px';
-        confirmation.style.fontWeight = 'bold';
-        confirmation.style.color = '#2563eb';
-        container.appendChild(confirmation);
-        // Show the original button again after a short delay
-        setTimeout(function() {
-            container.innerHTML = '';
-            composeBtn.style.display = 'inline-block';
-        }, 1500);
+
+        // Validate message
+        if (!textarea.value.trim()) {
+            const error = document.createElement('div');
+            error.id = 'email-error';
+            error.textContent = 'Error: Please enter a message';
+            error.style.color = 'red';
+            error.style.textAlign = 'center';
+            error.style.marginTop = '10px';
+            container.insertBefore(error, textarea);
+            return;
+        }
+
+        // Show loading state
+        sendBtn.textContent = 'Sending...';
+        sendBtn.disabled = true;
+
+        try {
+            // Send email to backend
+            const response = await fetch('/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: emailInput.value,
+                    subject: 'Message from Email Sender App',
+                    message: textarea.value
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Show success message
+                container.innerHTML = '';
+                const confirmation = document.createElement('div');
+                confirmation.textContent = 'Your email has been sent successfully!';
+                confirmation.style.textAlign = 'center';
+                confirmation.style.marginTop = '20px';
+                confirmation.style.fontWeight = 'bold';
+                confirmation.style.color = '#2563eb';
+                container.appendChild(confirmation);
+
+                // Show the original button again after a delay
+                setTimeout(function() {
+                    container.innerHTML = '';
+                    composeBtn.style.display = 'inline-block';
+                }, 3000);
+            } else {
+                // Show error message
+                const error = document.createElement('div');
+                error.id = 'email-error';
+                error.textContent = `Error: ${result.error}`;
+                error.style.color = 'red';
+                error.style.textAlign = 'center';
+                error.style.marginTop = '10px';
+                container.insertBefore(error, textarea);
+
+                // Reset button
+                sendBtn.textContent = 'Send Email';
+                sendBtn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error sending email:', error);
+            
+            // Show error message
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'email-error';
+            errorDiv.textContent = 'Error: Failed to send email. Please check your connection and try again.';
+            errorDiv.style.color = 'red';
+            errorDiv.style.textAlign = 'center';
+            errorDiv.style.marginTop = '10px';
+            container.insertBefore(errorDiv, textarea);
+
+            // Reset button
+            sendBtn.textContent = 'Send Email';
+            sendBtn.disabled = false;
+        }
     });
 });
 </script>
